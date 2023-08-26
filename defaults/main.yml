@@ -1,0 +1,15 @@
+---
+chrony_client_nts: true
+chrony_client_maxpoll: 12
+chrony_client_makestep_threshold: 1.0
+chrony_client_makestep_limit: 3
+chrony_client_dhcp_ntp_server: "{{ not chrony_client_nts }}"
+chrony_client_servers: "{{ chrony_client_nts | bool | ternary(['time.cloudflare.com'], []) }}"
+chrony_client_pools: "{{ chrony_client_nts | bool | ternary([], ['openwrt.pool.ntp.org']) }}"
+chrony_client_peers: []
+
+chrony_server_interfaces: []
+chrony_server_nts: "{{ chrony_server_interfaces | count > 0 and chrony_server_cert is defined }}"
+
+chrony_extra_groups: []
+chrony_extra_options: []

@@ -1,0 +1,6 @@
+---
+- name: 'Restart chrony'
+  ansible.builtin.service:
+    name: chronyd
+    state: "{{ ansible_facts['is_chroot'] | ternary(omit, 'restarted') }}"
+  listen: _chrony_restart

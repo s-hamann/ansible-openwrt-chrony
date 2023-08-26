@@ -1,0 +1,43 @@
+{# vim: filetype=conf.jinja2 #}
+{{ ansible_managed | comment }}
+
+# Load UCI configuration
+confdir /var/etc/chrony.d
+
+# Load NTP servers from DHCP if enabled in UCI
+sourcedir /var/run/chrony-dhcp
+
+# Log clock errors above 0.5 seconds
+logchange 0.5
+
+{% if chrony_extra_options | map('regex_search', '^(clientloglimit|ratelimit|ntsratelimit)\\s') | count == 0 %}
+# Don't log client accesses
+noclientlog
+
+{% endif %}
+# Mark the system clock as synchronized
+rtcsync
+
+# The system clock uses UTC
+rtconutc
+
+# Record the clock's drift
+driftfile /var/run/chrony/drift
+
+{% if chrony_client_nts | bool or chrony_server_nts | bool %}
+# Save NTS keys and cookies
+ntsdumpdir /var/run/chrony
+
+{% endif %}
+# Disable remote monitoring
+cmdport 0
+
+{% if chrony_server_nts %}
+# TLS certificate and key for the NTS server
+ntsservercert {{ chrony_server_cert | mandatory }}
+ntsserverkey {{ chrony_server_key | mandatory }}
+
+{% endif %}
+{% for line in chrony_extra_options %}
+{{ line }}
+{% endfor %}

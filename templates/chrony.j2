@@ -1,0 +1,63 @@
+{{ ansible_manged | comment }}
+{% for hostname in chrony_client_servers %}
+config server
+	option hostname '{{ hostname }}'
+{% if chrony_client_minpoll is defined %}
+	option minpoll '{{ chrony_client_minpoll }}'
+{% endif %}
+{% if chrony_client_maxpoll is defined %}
+	option maxpoll '{{ chrony_client_maxpoll }}'
+{% endif %}
+	option iburst '1'
+	option nts '{{ chrony_client_nts | bool | ternary('1', '0') }}'
+
+{% endfor %}
+{% for hostname in chrony_client_pools %}
+config pool
+	option hostname '{{ hostname }}'
+{% if chrony_client_minpoll is defined %}
+	option minpoll '{{ chrony_client_minpoll }}'
+{% endif %}
+{% if chrony_client_maxpoll is defined %}
+	option maxpoll '{{ chrony_client_maxpoll }}'
+{% endif %}
+	option iburst '1'
+	option nts '{{ chrony_client_nts | bool | ternary('1', '0') }}'
+
+{% endfor %}
+{% for hostname in chrony_client_peers %}
+config peer
+	option hostname '{{ hostname }}'
+{% if chrony_client_minpoll is defined %}
+	option minpoll '{{ chrony_client_minpoll }}'
+{% endif %}
+{% if chrony_client_maxpoll is defined %}
+	option maxpoll '{{ chrony_client_maxpoll }}'
+{% endif %}
+
+{% endfor %}
+config dhcp_ntp_server
+	option iburst '1'
+{% if chrony_client_minpoll is defined %}
+	option minpoll '{{ chrony_client_minpoll }}'
+{% endif %}
+{% if chrony_client_maxpoll is defined %}
+	option maxpoll '{{ chrony_client_maxpoll }}'
+{% endif %}
+	option nts '{{ chrony_client_nts | bool | ternary('1', '0') }}'
+	option disabled '{{ chrony_client_dhcp_ntp_server | bool | ternary('0', '1') }}'
+
+{% for interface in chrony_server_interfaces %}
+config allow
+	option interface '{{ interface }}'
+
+{% endfor %}
+config makestep
+	option threshold '{{ chrony_client_makestep_threshold }}'
+	option limit '{{ chrony_client_makestep_limit }}'
+{% if chrony_server_nts | bool or chrony_client_nts | bool %}
+
+config nts
+	option rtccheck '1'
+	option systemcerts '1'
+{% endif %}
