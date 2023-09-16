@@ -1,4 +1,4 @@
-{{ ansible_manged | comment }}
+{{ ansible_managed | comment }}
 {% for hostname in chrony_client_servers %}
 config server
 	option hostname '{{ hostname }}'
