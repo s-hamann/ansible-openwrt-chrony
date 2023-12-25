@@ -1,7 +1,7 @@
 ---
 - name: 'Install chrony'
   community.general.opkg:
-    name: "{{ (chrony_server_nts | bool or chrony_client_nts | bool) | ternary('chrony-nts', 'chrony') }}"
+    name: "{{ (chrony_server_nts | bool or chrony_client_nts | bool) | ansible.builtin.ternary('chrony-nts', 'chrony') }}"
     state: present
 
 - name: 'Configure chrony'
@@ -29,21 +29,21 @@
 - name: 'Add chrony user to extra groups'
   ansible.builtin.lineinfile:
     path: '/etc/group'
-    line: "{{ _etc_group.content | b64decode | split('\n') | select('match', item | regex_escape ~ ':') | first | regex_replace('(?<!:)$', ',') }}chrony"
+    line: "{{ _etc_group.content | b64decode | ansible.builtin.split('\n') | select('match', item | regex_escape ~ ':') | first | ansible.builtin.regex_replace('(?<!:)$', ',') }}chrony"
     regexp: "^{{ item }}:x:([0-9]+):(.*)$"
     backrefs: true
     state: present
   loop: "{{ chrony_extra_groups }}"
-  when: "(_etc_group.content | b64decode | split('\\n') | select('match', item | regex_escape ~ ':x:[0-9]+:.*\\\\bchrony\\\\b') | count) == 0"
+  when: "(_etc_group.content | b64decode | ansible.builtin.split('\\n') | select('match', item | regex_escape ~ ':x:[0-9]+:.*\\\\bchrony\\\\b') | count) == 0"
 
 - name: 'Disable and stop Busybox ntpd'
   ansible.builtin.service:
     name: sysntpd
     enabled: false
-    state: "{{ ansible_facts['is_chroot'] | ternary(omit, 'stopped') }}"
+    state: "{{ ansible_facts['is_chroot'] | ansible.builtin.ternary(omit, 'stopped') }}"
 
 - name: 'Enable and start chrony'
   ansible.builtin.service:
     name: chronyd
     enabled: true
-    state: "{{ ansible_facts['is_chroot'] | ternary(omit, 'started') }}"
+    state: "{{ ansible_facts['is_chroot'] | ansible.builtin.ternary(omit, 'started') }}"
