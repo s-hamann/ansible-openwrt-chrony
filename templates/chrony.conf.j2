@@ -29,9 +29,6 @@ driftfile /var/run/chrony/drift
 ntsdumpdir /var/run/chrony
 
 {% endif %}
-# Disable remote monitoring
-cmdport 0
-
 {% if chrony_server_nts %}
 # TLS certificate and key for the NTS server
 ntsservercert {{ chrony_server_cert | mandatory }}
