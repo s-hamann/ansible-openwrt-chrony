@@ -11,5 +11,4 @@ chrony_client_peers: []
 chrony_server_interfaces: []
 chrony_server_nts: "{{ chrony_server_interfaces | count > 0 and chrony_server_cert is defined }}"
 
-chrony_extra_groups: []
 chrony_extra_options: []

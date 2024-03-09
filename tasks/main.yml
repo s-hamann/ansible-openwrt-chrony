@@ -20,22 +20,6 @@
     label: "{{ item['dest'] }}"
   notify: _chrony_restart
 
-- name: 'Read /etc/group'
-  ansible.builtin.slurp:
-    src: '/etc/group'
-  when: "chrony_extra_groups | count > 0"
-  register: _etc_group
-
-- name: 'Add chrony user to extra groups'
-  ansible.builtin.lineinfile:
-    path: '/etc/group'
-    line: "{{ _etc_group.content | b64decode | ansible.builtin.split('\n') | select('match', item | regex_escape ~ ':') | first | ansible.builtin.regex_replace('(?<!:)$', ',') }}chrony"
-    regexp: "^{{ item }}:x:([0-9]+):(.*)$"
-    backrefs: true
-    state: present
-  loop: "{{ chrony_extra_groups }}"
-  when: "(_etc_group.content | b64decode | ansible.builtin.split('\\n') | select('match', item | regex_escape ~ ':x:[0-9]+:.*\\\\bchrony\\\\b') | count) == 0"
-
 - name: 'Disable and stop Busybox ntpd'
   ansible.builtin.service:
     name: sysntpd

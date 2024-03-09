@@ -66,11 +66,6 @@ Options that are relevant only for this mode start with `chrony_server_`.
   Path to the PEM-encoded private key file for the certificate.
   The file needs to exist and be readable by the `chrony` user.
   Mandatory if `chrony_server_nts` is `true`, ignored otherwise.
-* `chrony_extra_groups`  
-  A list of groups that the `chrony` system user is added to.
-  This allows granting access to additional resources, such as the private key file when running a NTS server.
-  All groups need to exist on the target system; this role does not create them.
-  Empty by default.
 * `chrony_extra_options`  
   A list of raw configuration lines to be added to `chrony.conf`.
   This allows full customization of the Chrony configuration that goes beyond the abstraction provided by this role.
@@ -100,8 +95,6 @@ chrony_server_interfaces:
   - lan
 chrony_server_cert: "/etc/{{ ansible_facts['hostname'] }}_fullchain.pem"
 chrony_server_key: "/etc/{{ ansible_facts['hostname'] }}.key"
-chrony_extra_groups:
-  - tls
 chrony_extra_options:
   - 'maxsamples 12'
   - 'refclock SOCK /var/run/chrony.ttyS0.sock'
