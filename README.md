@@ -63,7 +63,8 @@ Options that are relevant only for this mode start with `chrony_server_`.
   The file needs to exist.
   If Chrony is not configured to run as `root`, a service is installed that runs before the real `chronyd` service.
   This service copies the certificate and key to a temporary location and makes that copy owned by the user Chrony runs as.
-  On certificate renewal, the `chronyd-cert` service needs to be restarted before the `chronyd` service.
+  If `chronyd` is detected as running, a `rekey` command is sent to make Chrony reload the certificate and key.
+  On certificate renewal, it is sufficient to restart the `chronyd-cert` service.
   Mandatory if `chrony_server_nts` is `true`, ignored otherwise.
 * `chrony_server_key`  
   Path to the PEM-encoded private key file for the certificate.
