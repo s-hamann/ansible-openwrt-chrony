@@ -1,8 +1,21 @@
 ---
+- name: 'Get configured chrony user'
+  ansible.builtin.set_fact:
+    _chrony_user: "{{ ((['user chrony'] + chrony_extra_options | select('ansible.builtin.match', 'user\\s+')) | last).split(maxsplit=1)[1] }}"
+
 - name: 'Install chrony'
   community.general.opkg:
     name: "{{ (chrony_server_nts | bool or chrony_client_nts | bool) | ansible.builtin.ternary('chrony-nts', 'chrony') }}"
     state: present
+
+- name: 'Install chrony X.509 certificate handler'
+  ansible.builtin.template:
+    dest: '/etc/init.d/chronyd-cert'
+    src: 'chronyd-cert.j2'
+    owner: root
+    group: root
+    mode: '0755'
+  when: "chrony_server_nts | bool and _chrony_user != 'root'"
 
 - name: 'Configure chrony'
   ansible.builtin.template:
@@ -25,6 +38,13 @@
     name: sysntpd
     enabled: false
     state: "{{ ansible_facts['is_chroot'] | ansible.builtin.ternary(omit, 'stopped') }}"
+
+- name: 'Enable and start chrony X.509 certificate handler'
+  ansible.builtin.service:
+    name: chronyd-cert
+    enabled: true
+    state: "{{ ansible_facts['is_chroot'] | ansible.builtin.ternary(omit, 'started') }}"
+  when: "chrony_server_nts | bool and _chrony_user != 'root'"
 
 - name: 'Enable and start chrony'
   ansible.builtin.service:

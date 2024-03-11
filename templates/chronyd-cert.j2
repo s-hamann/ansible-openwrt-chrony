@@ -1,0 +1,13 @@
+#!/bin/sh /etc/rc.common
+# Copy the global X.509 certificate and key to a temporary location and make
+# them owned by/readable for the chrony user.
+
+# run before chrony starts (15)
+START=14
+
+start() {
+    mkdir -p -- {{ chrony_tmpdir | quote }}
+    cp -p -t {{ chrony_tmpdir | quote }} -- {{ chrony_server_cert | quote }} {{ chrony_server_key | quote }}
+    chown {{ _chrony_user }}: {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_cert | ansible.builtin.basename) | quote }} {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_key | ansible.builtin.basename) | quote }}
+    chmod 0400 {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_cert | ansible.builtin.basename) | quote }} {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_key | ansible.builtin.basename) | quote }}
+}

@@ -31,8 +31,13 @@ ntsdumpdir /var/run/chrony
 {% endif %}
 {% if chrony_server_nts %}
 # TLS certificate and key for the NTS server
+{% if _chrony_user == 'root' %}
 ntsservercert {{ chrony_server_cert | mandatory }}
 ntsserverkey {{ chrony_server_key | mandatory }}
+{% else %}
+ntsservercert {{ chrony_tmpdir.rstrip('/') }}/{{ chrony_server_cert | mandatory | ansible.builtin.basename }}
+ntsserverkey {{ chrony_tmpdir.rstrip('/') }}/{{ chrony_server_key | mandatory | ansible.builtin.basename }}
+{% endif %}
 
 {% endif %}
 {% for line in chrony_extra_options %}

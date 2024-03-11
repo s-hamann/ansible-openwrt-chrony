@@ -60,11 +60,13 @@ Options that are relevant only for this mode start with `chrony_server_`.
   Default is `true` if `chrony_server_interfaces` is not empty and `false` if the server is disabled anyway.
 * `chrony_server_cert`  
   Path to a PEM-encoded X.509 certificate for Chrony to use, including any intermediate certificates.
-  The file needs to exist and be readable by the `chrony` user.
+  The file needs to exist.
+  If Chrony is not configured to run as `root`, a service is installed that runs before the real `chronyd` service.
+  This service copies the certificate and key to a temporary location and makes that copy owned by the user Chrony runs as.
+  On certificate renewal, the `chronyd-cert` service needs to be restarted before the `chronyd` service.
   Mandatory if `chrony_server_nts` is `true`, ignored otherwise.
 * `chrony_server_key`  
   Path to the PEM-encoded private key file for the certificate.
-  The file needs to exist and be readable by the `chrony` user.
   Mandatory if `chrony_server_nts` is `true`, ignored otherwise.
 * `chrony_extra_options`  
   A list of raw configuration lines to be added to `chrony.conf`.

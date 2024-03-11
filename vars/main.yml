@@ -1,0 +1,2 @@
+---
+chrony_tmpdir: '/tmp/etc/chrony.d/'
