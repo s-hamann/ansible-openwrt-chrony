@@ -1,7 +1,7 @@
-OpenWRT Chrony
+OpenWrt Chrony
 ==============
 
-This role configures [Chrony](https://chrony-project.org/) on [OpenWRT](https://www.openwrt.org/) targets.
+This role configures [Chrony](https://chrony-project.org/) on [OpenWrt](https://www.openwrt.org/) targets.
 Chrony can be used as a NTP client or server, with or without Network Time Security (NTS) support.
 
 Requirements
@@ -9,7 +9,7 @@ Requirements
 
 This role has no special requirements on the controller.
 
-It does, however, require a working [Python](https://www.python.org/) installation on the target system or [gekmihesg's Ansible library for OpenWRT](https://github.com/gekmihesg/ansible-openwrt) on the Ansible controller.
+It does, however, require a working [Python](https://www.python.org/) installation on the target system or [gekmihesg's Ansible library for OpenWrt](https://github.com/gekmihesg/ansible-openwrt) on the Ansible controller.
 
 Role Variables
 --------------

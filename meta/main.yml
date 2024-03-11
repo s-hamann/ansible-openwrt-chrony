@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: 'Sebastian Hamann'
-  description: 'Chrony setup for OpenWRT'
+  description: 'Chrony setup for OpenWrt'
 
   license: MIT
 
