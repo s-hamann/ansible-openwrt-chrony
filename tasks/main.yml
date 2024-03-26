@@ -17,6 +17,13 @@
     mode: '0755'
   when: "chrony_server_nts | bool and _chrony_user != 'root'"
 
+- name: 'Keep chrony X.509 certificate handler on system upgrades'
+  ansible.builtin.lineinfile:
+    path: '/etc/sysupgrade.conf'
+    line: '/etc/init.d/chronyd-cert'
+    state: present
+  when: "chrony_server_nts | bool and _chrony_user != 'root'"
+
 - name: 'Configure chrony'
   ansible.builtin.template:
     dest: "{{ item['dest'] }}"
