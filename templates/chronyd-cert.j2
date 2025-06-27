@@ -10,7 +10,7 @@ start() {
     cp -p -t {{ chrony_tmpdir | quote }} -- {{ chrony_server_cert | quote }} {{ chrony_server_key | quote }}
     chown {{ _chrony_user }}: {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_cert | ansible.builtin.basename) | quote }} {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_key | ansible.builtin.basename) | quote }}
     chmod 0400 {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_cert | ansible.builtin.basename) | quote }} {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_key | ansible.builtin.basename) | quote }}
-    if [ "$(service chronyd status)" = running ]; then
-        service chrony restart
+    if [ "$(/sbin/service chronyd status)" = running ]; then
+        /sbin/service chronyd restart
     fi
 }
