@@ -9,7 +9,7 @@ config server
 	option maxpoll '{{ chrony_client_maxpoll }}'
 {% endif %}
 	option iburst '1'
-	option nts '{{ chrony_client_nts | bool | ansible.builtin.ternary('1', '0') }}'
+	option nts '{{ chrony_client_nts | ansible.builtin.bool | ansible.builtin.ternary('1', '0') }}'
 
 {% endfor %}
 {% for hostname in chrony_client_pools %}
@@ -22,7 +22,7 @@ config pool
 	option maxpoll '{{ chrony_client_maxpoll }}'
 {% endif %}
 	option iburst '1'
-	option nts '{{ chrony_client_nts | bool | ansible.builtin.ternary('1', '0') }}'
+	option nts '{{ chrony_client_nts | ansible.builtin.bool | ansible.builtin.ternary('1', '0') }}'
 
 {% endfor %}
 {% for hostname in chrony_client_peers %}
@@ -44,8 +44,8 @@ config dhcp_ntp_server
 {% if chrony_client_maxpoll is defined %}
 	option maxpoll '{{ chrony_client_maxpoll }}'
 {% endif %}
-	option nts '{{ chrony_client_nts | bool | ansible.builtin.ternary('1', '0') }}'
-	option disabled '{{ chrony_client_dhcp_ntp_server | bool | ansible.builtin.ternary('0', '1') }}'
+	option nts '{{ chrony_client_nts | ansible.builtin.bool | ansible.builtin.ternary('1', '0') }}'
+	option disabled '{{ chrony_client_dhcp_ntp_server | ansible.builtin.bool | ansible.builtin.ternary('0', '1') }}'
 
 {% for interface in chrony_server_interfaces %}
 config allow
@@ -55,7 +55,7 @@ config allow
 config makestep
 	option threshold '{{ chrony_client_makestep_threshold }}'
 	option limit '{{ chrony_client_makestep_limit }}'
-{% if chrony_server_nts | bool or chrony_client_nts | bool %}
+{% if chrony_server_nts | ansible.builtin.bool or chrony_client_nts | ansible.builtin.bool %}
 
 config nts
 	option rtccheck '1'

@@ -5,7 +5,7 @@
 
 - name: 'Install chrony'
   community.general.opkg:
-    name: "{{ (chrony_server_nts | bool or chrony_client_nts | bool) | ansible.builtin.ternary('chrony-nts', 'chrony') }}"
+    name: "{{ (chrony_server_nts | ansible.builtin.bool or chrony_client_nts | ansible.builtin.bool) | ansible.builtin.ternary('chrony-nts', 'chrony') }}"
     state: present
 
 - name: 'Install chrony X.509 certificate handler'
@@ -15,14 +15,14 @@
     owner: root
     group: root
     mode: '0755'
-  when: "chrony_server_nts | bool and _chrony_user != 'root'"
+  when: "chrony_server_nts | ansible.builtin.bool and _chrony_user != 'root'"
 
 - name: 'Keep chrony X.509 certificate handler on system upgrades'
   ansible.builtin.lineinfile:
     path: '/etc/sysupgrade.conf'
     line: '/etc/init.d/chronyd-cert'
     state: present
-  when: "chrony_server_nts | bool and _chrony_user != 'root'"
+  when: "chrony_server_nts | ansible.builtin.bool and _chrony_user != 'root'"
 
 - name: 'Configure chrony'
   ansible.builtin.template:
@@ -51,7 +51,7 @@
     name: chronyd-cert
     enabled: true
     state: "{{ ansible_facts['is_chroot'] | ansible.builtin.ternary(omit, 'started') }}"
-  when: "chrony_server_nts | bool and _chrony_user != 'root'"
+  when: "chrony_server_nts | ansible.builtin.bool and _chrony_user != 'root'"
 
 - name: 'Enable and start chrony'
   ansible.builtin.service:

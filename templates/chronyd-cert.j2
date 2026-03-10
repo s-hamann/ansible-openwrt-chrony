@@ -6,10 +6,10 @@
 START=14
 
 start() {
-    mkdir -p -- {{ chrony_tmpdir | quote }}
-    cp -p -t {{ chrony_tmpdir | quote }} -- {{ chrony_server_cert | quote }} {{ chrony_server_key | quote }}
-    chown {{ _chrony_user }}: {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_cert | ansible.builtin.basename) | quote }} {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_key | ansible.builtin.basename) | quote }}
-    chmod 0400 {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_cert | ansible.builtin.basename) | quote }} {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_key | ansible.builtin.basename) | quote }}
+    mkdir -p -- {{ chrony_tmpdir | ansible.builtin.quote }}
+    cp -p -t {{ chrony_tmpdir | ansible.builtin.quote }} -- {{ chrony_server_cert | ansible.builtin.quote }} {{ chrony_server_key | ansible.builtin.quote }}
+    chown {{ _chrony_user }}: {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_cert | ansible.builtin.basename) | ansible.builtin.quote }} {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_key | ansible.builtin.basename) | ansible.builtin.quote }}
+    chmod 0400 {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_cert | ansible.builtin.basename) | ansible.builtin.quote }} {{ (chrony_tmpdir.rstrip('/') ~ '/' ~ chrony_server_key | ansible.builtin.basename) | ansible.builtin.quote }}
     case "$(/sbin/service chronyd status)" in
     running*)
         /sbin/service chronyd restart
