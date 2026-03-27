@@ -4,12 +4,19 @@
     _chrony_user: "{{ ((['user chrony'] + chrony_extra_options | select('ansible.builtin.match', 'user\\s+')) | last).split(maxsplit=1)[1] }}"
 
 - name: 'Install chrony'
-  community.general.opkg:
+  community.openwrt.apk:
     name: "{{ (chrony_server_nts | ansible.builtin.bool or chrony_client_nts | ansible.builtin.bool) | ansible.builtin.ternary('chrony-nts', 'chrony') }}"
     state: present
+  when: "ansible_facts['pkg_mgr'] == 'apk'"
+
+- name: 'Install chrony'
+  community.openwrt.opkg:
+    name: "{{ (chrony_server_nts | ansible.builtin.bool or chrony_client_nts | ansible.builtin.bool) | ansible.builtin.ternary('chrony-nts', 'chrony') }}"
+    state: present
+  when: "ansible_facts['pkg_mgr'] == 'opkg'"
 
 - name: 'Install chrony X.509 certificate handler'
-  ansible.builtin.template:
+  community.openwrt.template:
     dest: '/etc/init.d/chronyd-cert'
     src: 'chronyd-cert.j2'
     owner: root
@@ -18,14 +25,14 @@
   when: "chrony_server_nts | ansible.builtin.bool and _chrony_user != 'root'"
 
 - name: 'Keep chrony X.509 certificate handler on system upgrades'
-  ansible.builtin.lineinfile:
+  community.openwrt.lineinfile:
     path: '/etc/sysupgrade.conf'
     line: '/etc/init.d/chronyd-cert'
     state: present
   when: "chrony_server_nts | ansible.builtin.bool and _chrony_user != 'root'"
 
 - name: 'Configure chrony'
-  ansible.builtin.template:
+  community.openwrt.template:
     dest: "{{ item['dest'] }}"
     src: "{{ item['src'] }}"
     owner: root
@@ -41,20 +48,20 @@
   notify: _chrony_restart
 
 - name: 'Disable and stop Busybox ntpd'
-  ansible.builtin.service:
+  community.openwrt.service:
     name: sysntpd
     enabled: false
     state: "{{ ansible_facts['is_chroot'] | ansible.builtin.ternary(omit, 'stopped') }}"
 
 - name: 'Enable and start chrony X.509 certificate handler'
-  ansible.builtin.service:
+  community.openwrt.service:
     name: chronyd-cert
     enabled: true
     state: "{{ ansible_facts['is_chroot'] | ansible.builtin.ternary(omit, 'started') }}"
   when: "chrony_server_nts | ansible.builtin.bool and _chrony_user != 'root'"
 
 - name: 'Enable and start chrony'
-  ansible.builtin.service:
+  community.openwrt.service:
     name: chronyd
     enabled: true
     state: "{{ ansible_facts['is_chroot'] | ansible.builtin.ternary(omit, 'started') }}"
